@@ -1,6 +1,7 @@
 let localStream;
 let peerConnection;
-const socket = new WebSocket("ws://localhost:8844/ws");
+const socket = new WebSocket("wss://webrtctest.ergov.com/ws");
+// const socket = new WebSocket("ws://localhost:8844/ws");
 // const socket = new WebSocket("ws://localhost:8080");
 const constraints = { video: true, audio: true };
 
