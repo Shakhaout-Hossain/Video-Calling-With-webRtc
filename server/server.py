@@ -2,13 +2,15 @@ from aiohttp import web, WSMsgType
 import uuid
 import json
 import os
+from aiohttp_middlewares import cors_middleware
 
 class WebRTCRoom:
     def __init__(self):
         self.clients = set()
 
 rooms = {}
-app = web.Application()
+app = web.Application(middlewares=[cors_middleware(allow_all=True)])
+# app = web.Application()
 
 async def index(request):
     return web.FileResponse(os.path.join('public', 'index.html'))
