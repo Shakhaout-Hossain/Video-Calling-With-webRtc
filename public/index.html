@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebRTC Video Call</title>
+    <style>
+      #videoContainer {
+        display: flex;
+        gap: 10px;
+      }
+      video {
+        width: 400px;
+        height: 300px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" id="roomId" placeholder="Room ID" />
+    <button onclick="joinRoom()">Join/Create Room</button>
+    <button onclick="startCall()" id="callBtn" disabled>Start Call</button>
+    <button onclick="hangUp()" id="hangupBtn" disabled>Hang Up</button>
+
+    <div id="videoContainer">
+      <video id="localVideo" autoplay muted></video>
+      <video id="remoteVideo" autoplay></video>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
