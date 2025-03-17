@@ -55,4 +55,4 @@ app.router.add_static('/static', 'public')
 app.router.add_route('GET', '/ws', websocket_handler)
 
 if __name__ == '__main__':
-    web.run_app(app, port=8080)
+    web.run_app(app, port=8844)
