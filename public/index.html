@@ -2,15 +2,42 @@
 <html>
   <head>
     <title>WebRTC Video Call</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      /* Style for input and buttons to be more touch-friendly */
+      input,
+      button {
+        padding: 10px;
+        margin: 5px;
+        font-size: 16px;
+      }
+      /* Responsive container for video elements */
       #videoContainer {
         display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 10px;
       }
+      /* Responsive video styling */
       video {
-        width: 400px;
-        height: 300px;
+        width: 100%;
+        max-width: 400px;
+        height: auto;
         border: 1px solid #ccc;
+      }
+      /* Media query for smaller devices (phones) */
+      @media (max-width: 600px) {
+        #videoContainer {
+          flex-direction: column;
+        }
+        video {
+          max-width: 100%;
+        }
       }
     </style>
   </head>
