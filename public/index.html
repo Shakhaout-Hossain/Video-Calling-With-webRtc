@@ -6,32 +6,33 @@
     <style>
       body {
         margin: 0;
-        padding: 20px;
+        padding: 15px;
         box-sizing: border-box;
       }
 
       #videoContainer {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: wrap;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 15px;
       }
 
       video {
         width: 100%;
         height: auto;
         max-width: 600px;
-        min-width: 250px;
+        min-width: 200px;
         border: 1px solid #ccc;
         background: #000;
+        aspect-ratio: 16/9;
       }
 
       input,
       button {
-        margin: 5px;
+        margin: 4px;
         padding: 8px 12px;
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
 
       button {
@@ -42,24 +43,29 @@
       @media (max-width: 480px) {
         #videoContainer {
           flex-direction: column;
+          gap: 4px;
+          margin-top: 10px;
         }
 
         video {
           width: 100%;
-          height: auto;
+          max-height: 180px;
+          min-width: 180px;
         }
 
         input,
         button {
           width: 100%;
-          margin: 5px 0;
+          margin: 4px 0;
+          padding: 8px;
+          font-size: 0.9rem;
         }
       }
 
       /* Tablet Styles */
       @media (min-width: 481px) and (max-width: 768px) {
         video {
-          width: calc(50% - 20px);
+          width: calc(50% - 10px);
         }
       }
 
@@ -67,7 +73,7 @@
       @media (min-width: 769px) {
         video {
           width: 400px;
-          height: 200px;
+          aspect-ratio: 4/3;
         }
       }
     </style>
