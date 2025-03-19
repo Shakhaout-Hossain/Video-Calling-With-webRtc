@@ -1,35 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <title>WebRTC Video Call</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
       #videoContainer {
         display: flex;
-        flex-direction: row;
         gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
       }
+
       video {
-        flex: 1 1 0;
-        aspect-ratio: 16 / 9;
+        width: 100%;
+        height: auto;
+        max-width: 600px;
+        min-width: 250px;
         border: 1px solid #ccc;
+        background: #000;
       }
-      @media (max-width: 600px) {
+
+      input,
+      button {
+        margin: 5px;
+        padding: 8px 12px;
+        font-size: 1rem;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      /* Mobile Styles */
+      @media (max-width: 480px) {
         #videoContainer {
           flex-direction: column;
         }
+
         video {
-          flex: none;
           width: 100%;
           height: auto;
+        }
+
+        input,
+        button {
+          width: 100%;
+          margin: 5px 0;
+        }
+      }
+
+      /* Tablet Styles */
+      @media (min-width: 481px) and (max-width: 768px) {
+        video {
+          width: calc(50% - 20px);
+        }
+      }
+
+      /* Desktop Styles */
+      @media (min-width: 769px) {
+        video {
+          width: 400px;
+          height: 300px;
         }
       }
     </style>
   </head>
   <body>
-    <input type="text" id="roomId" placeholder="Room ID" />
-    <button onclick="joinRoom()">Join/Create Room</button>
-    <button onclick="startCall()" id="callBtn" disabled>Start Call</button>
-    <button onclick="hangUp()" id="hangupBtn" disabled>Hang Up</button>
+    <div class="controls">
+      <input type="text" id="roomId" placeholder="Room ID" />
+      <button onclick="joinRoom()">Join/Create Room</button>
+      <button onclick="startCall()" id="callBtn" disabled>Start Call</button>
+      <button onclick="hangUp()" id="hangupBtn" disabled>Hang Up</button>
+    </div>
 
     <div id="videoContainer">
       <video id="localVideo" autoplay muted></video>
