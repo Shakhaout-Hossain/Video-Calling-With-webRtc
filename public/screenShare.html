@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Advanced Screen Sharing</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 12px 24px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+      }
+
+      #screenPreview {
+        width: 100%;
+        height: 70vh;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        background: #000;
+        margin-top: 20px;
+      }
+
+      .stats {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 4px;
+      }
+
+      .screen-list {
+        margin: 15px 0;
+        padding: 10px;
+        background: #e9ecef;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <button id="startBtn">Start Sharing</button>
+      <button id="stopBtn" disabled>Stop Sharing</button>
+    </div>
+
+    <div class="screen-list" id="screenList"></div>
+    <video id="screenPreview" autoplay playsinline></video>
+    <div class="stats" id="stats"></div>
+
+    <script>
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const preview = document.getElementById("screenPreview");
+      const screenList = document.getElementById("screenList");
+      const statsDiv = document.getElementById("stats");
+
+      let mediaStream = null;
+      let peerConnection = null;
+
+      // Advanced constraints
+      const mediaConstraints = {
+        video: {
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          frameRate: { ideal: 30 },
+          displaySurface: "monitor", // monitor, window, browser
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+        preferCurrentTab: true, // For Chrome tab sharing
+      };
+
+      async function startScreenSharing() {
+        try {
+          mediaStream = await navigator.mediaDevices.getDisplayMedia(
+            mediaConstraints
+          );
+
+          // Initialize WebRTC Peer Connection
+          peerConnection = new RTCPeerConnection();
+          mediaStream.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, mediaStream);
+          });
+
+          // Display local preview
+          preview.srcObject = mediaStream;
+          updateControls(true);
+
+          // Setup track monitoring
+          monitorTrackStats(mediaStream.getVideoTracks()[0]);
+
+          // Handle automatic stopping
+          mediaStream.getVideoTracks()[0].onended = stopScreenSharing;
+
+          // List available screens (educational purposes)
+          listScreens();
+        } catch (error) {
+          handleGetDisplayMediaError(error);
+        }
+      }
+
+      function stopScreenSharing() {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+          preview.srcObject = null;
+          if (peerConnection) peerConnection.close();
+          updateControls(false);
+          clearStats();
+        }
+      }
+
+      function updateControls(isSharing) {
+        startBtn.disabled = isSharing;
+        stopBtn.disabled = !isSharing;
+      }
+
+      async function listScreens() {
+        try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoDevices = devices.filter((d) => d.kind === "videoinput");
+          screenList.innerHTML = `<strong>Available Video Sources:</strong><br>
+                    ${videoDevices.map((d) => `${d.label}`).join("<br>")}`;
+        } catch (error) {
+          console.error("Error listing devices:", error);
+        }
+      }
+
+      function monitorTrackStats(track) {
+        const statsInterval = setInterval(async () => {
+          if (!track) {
+            clearInterval(statsInterval);
+            return;
+          }
+
+          const settings = track.getSettings();
+          const capabilities = track.getCapabilities();
+
+          statsDiv.innerHTML = `
+                    Resolution: ${settings.width}x${settings.height}<br>
+                    Frame Rate: ${settings.frameRate}fps<br>
+                    Device: ${settings.deviceId || "N/A"}<br>
+                    Surface Type: ${settings.displaySurface || "N/A"}
+                `;
+        }, 1000);
+      }
+
+      function handleGetDisplayMediaError(error) {
+        let message = "Error: ";
+        switch (error.name) {
+          case "NotAllowedError":
+            message += "User denied permission";
+            break;
+          case "NotFoundError":
+            message += "No screen source available";
+            break;
+          case "NotReadableError":
+            message += "Source cannot be accessed";
+            break;
+          default:
+            message += error.message;
+        }
+        alert(message);
+      }
+
+      function clearStats() {
+        statsDiv.innerHTML = "";
+        screenList.innerHTML = "";
+      }
+
+      // Event Listeners
+      startBtn.addEventListener("click", startScreenSharing);
+      stopBtn.addEventListener("click", stopScreenSharing);
+
+      // Initial setup
+      if (!navigator.mediaDevices?.getDisplayMedia) {
+        alert("Screen sharing not supported in this browser!");
+        startBtn.disabled = true;
+      }
+    </script>
+  </body>
+</html>
